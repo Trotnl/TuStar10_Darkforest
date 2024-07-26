@@ -13,6 +13,8 @@ public class Player : NetworkBehaviour
     private Vector2 direction;
     private GameObject moveJoystickGO;
     private FixedJoystick moveJoystick;
+    private GameObject attackJoyStickGO;
+    private AttackJoystick attackJoystick;
 
     // 攻击
     public GameObject bullet;
@@ -21,6 +23,7 @@ public class Player : NetworkBehaviour
     // 组件
     private Animator animator;
     private Rigidbody2D rb;
+    private GameObject torch;
 
     // 同步人物姓名
     public TextMeshProUGUI nameText;
@@ -50,13 +53,15 @@ public class Player : NetworkBehaviour
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        
+        torch = transform.GetChild(0).GetChild(1).gameObject;
 
         if (!isLocalPlayer) { return; }
 
         // 绑定摇杆
         moveJoystickGO = transform.Find("/Canvas/MoveJoystick").gameObject;
         moveJoystick = moveJoystickGO.GetComponent<FixedJoystick>();
+        attackJoyStickGO = transform.Find("/Canvas/AttackJoystick").gameObject;
+        attackJoystick = attackJoyStickGO.GetComponent<AttackJoystick>();
 
         // 注册事件
         EventManager.Listen(EEventType.joystick_attack_up.ToString(), OnJoystickAttackUp);
@@ -75,6 +80,7 @@ public class Player : NetworkBehaviour
         if (!isLocalPlayer) { return; }
 
         direction = moveJoystick.Direction;
+        CmdTorch(attackJoystick.Direction);
     }
 
     private void FixedUpdate()
@@ -160,5 +166,18 @@ public class Player : NetworkBehaviour
     private void OnJoystickAttackUp(object[] arr)
     {
         CmdAttack((Vector2)arr[0]);
+    }
+
+    [Command]
+    private void CmdTorch(Vector2 torchDirection)
+    {
+        RpcTorch(torchDirection);
+    }
+
+    [ClientRpc]
+    private void RpcTorch(Vector2 torchDirection)
+    {
+        torch.transform.rotation = Quaternion.FromToRotation(Vector3.up, torchDirection);
+        Debug.Log(torchDirection.x + "" + torchDirection.y.ToString());
     }
 }
