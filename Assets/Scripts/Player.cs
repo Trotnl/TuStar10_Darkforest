@@ -1,44 +1,44 @@
-using Mirror;
+ï»¿using Mirror;
 using TMPro;
 using UnityEngine;
 
 
-// Command£º¿Í»§¶Ëµ÷ÓÃ£¬·şÎñÆ÷Ö´ĞĞ
-// ClientRpc: ·şÎñÆ÷µ÷ÓÃ£¬¿Í»§¶ËÖ´ĞĞ
-// SyncVarÓëClientRpcÀàËÆ£¬ÓÃÓÚĞŞÊÎ±äÁ¿
+// Commandï¼šå®¢æˆ·ç«¯è°ƒç”¨ï¼ŒæœåŠ¡å™¨æ‰§è¡Œ
+// ClientRpc: æœåŠ¡å™¨è°ƒç”¨ï¼Œå®¢æˆ·ç«¯æ‰§è¡Œ
+// SyncVarä¸ClientRpcç±»ä¼¼ï¼Œç”¨äºä¿®é¥°å˜é‡
 public class Player : NetworkBehaviour
 {
-    // ÒÆ¶¯
+    // ç§»åŠ¨
     public float speed = 5f;
     private Vector2 direction;
     private GameObject moveJoystickGO;
     private FixedJoystick moveJoystick;
 
-    // ¹¥»÷
+    // æ”»å‡»
     public GameObject bullet;
     public float bulletSpeed = 7f;
 
-    // ×é¼ş
+    // ç»„ä»¶
     private Animator animator;
     private Rigidbody2D rb;
 
-    // Í¬²½ÈËÎïĞÕÃû
+    // åŒæ­¥äººç‰©å§“å
     public TextMeshProUGUI nameText;
     [SyncVar(hook = nameof(OnNameChange))]
     private string name;
 
-    // Í¬²½ÈËÎï·­×ª
+    // åŒæ­¥äººç‰©ç¿»è½¬
     private SpriteRenderer sprite;
     [SyncVar(hook = nameof(OnFlipChange))]
     private bool flipX;
 
-    // Í¬²½¶¯»­
+    // åŒæ­¥åŠ¨ç”»
     [SyncVar(hook = nameof(OnAnimationChange))]
     private bool run;
 
     public override void OnStartLocalPlayer()
     {
-        // Ïà»ú¸úËæ
+        // ç›¸æœºè·Ÿéš
         Camera.main.transform.SetParent(transform);
         Camera.main.transform.localPosition = new Vector3(0, 0, -10);
 
@@ -54,11 +54,11 @@ public class Player : NetworkBehaviour
 
         if (!isLocalPlayer) { return; }
 
-        // °ó¶¨Ò¡¸Ë
+        // ç»‘å®šæ‘‡æ†
         moveJoystickGO = transform.Find("/Canvas/MoveJoystick").gameObject;
         moveJoystick = moveJoystickGO.GetComponent<FixedJoystick>();
 
-        // ×¢²áÊÂ¼ş
+        // æ³¨å†Œäº‹ä»¶
         EventManager.Listen(EEventType.joystick_attack_up.ToString(), OnJoystickAttackUp);
     }
 
@@ -81,17 +81,17 @@ public class Player : NetworkBehaviour
     {
         if (!isLocalPlayer) { return; }
 
-        // ÒÆ¶¯
+        // ç§»åŠ¨
         Move(moveJoystick.Direction);
     }
 
-    // ÇĞ»»¶¯»­
+    // åˆ‡æ¢åŠ¨ç”»
     void SetAnimation()
     {
         CmdSetAnimation(direction != Vector2.zero);
     }
 
-    // ÈËÎï·­×ª
+    // äººç‰©ç¿»è½¬
     private void SetFlip()
     {
         CmdFlip(direction.x < 0);
@@ -144,16 +144,16 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcAttack(Vector2 attackDirection)
     {
-        // Éú³É×Óµ¯
+        // ç”Ÿæˆå­å¼¹
         GameObject bulletClone = Instantiate(bullet, transform.position, Quaternion.identity);
 
-        // ËÙ¶È
+        // é€Ÿåº¦
         bulletClone.GetComponent<Rigidbody2D>().velocity = attackDirection.normalized * bulletSpeed;
 
-        // ½Ç¶È
+        // è§’åº¦
         bulletClone.transform.rotation = Quaternion.FromToRotation(Vector3.up, attackDirection);
 
-        // ÉèÖÃ¹¥»÷Õß
+        // è®¾ç½®æ”»å‡»è€…
         bulletClone.GetComponent<Bullet>().owner = gameObject;
     }
 

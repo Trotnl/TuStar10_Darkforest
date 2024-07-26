@@ -1,9 +1,9 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public enum EEventType
 {
-    // ¹¥»÷Ò¡¸Ë
+    // æ”»å‡»æ‘‡æ†
     joystick_attack_up,
 }
