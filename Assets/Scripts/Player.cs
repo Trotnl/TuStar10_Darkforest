@@ -79,7 +79,7 @@ public class Player : NetworkBehaviour
 
         if (!isLocalPlayer) { return; }
 
-        direction = moveJoystick.Direction;
+        direction = moveJoystick.Direction; 
         CmdTorch(attackJoystick.Direction);
     }
 
