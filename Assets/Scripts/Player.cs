@@ -1,7 +1,11 @@
 ﻿using Mirror;
 using TMPro;
 using UnityEngine;
-
+using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
+// Command：客户端调用，服务器执行
+// ClientRpc: 服务器调用，客户端执行
+// SyncVar与ClientRpc类似，用于修饰变量
 public class Player : NetworkBehaviour
 {
     // 移动
@@ -10,16 +14,64 @@ public class Player : NetworkBehaviour
     private GameObject moveJoystickGO;
     private FixedJoystick moveJoystick;
     private GameObject attackJoyStickGO;
-    private AttackJoystick attackJoystick;
+    public AttackJoystick attackJoystick;
 
     // 攻击
     public GameObject bullet;
     public float bulletSpeed = 7f;
+    public bool canMove = true;
+    public float canMoveTime = 2.0f;
+
+    // 手电筒
+    private GameObject torchBtn;
+    public struct FlashLight
+    {
+        public FlashLight(float angle_, float radius_, float intensity_)
+        {
+            angle = angle_;
+            radius = radius_;
+            intensity = intensity_;
+        }
+
+        public float angle;
+        public float radius;
+        public float intensity;
+    }
+
+    [SyncVar(hook = nameof(OnFlashLightChange))]
+    private FlashLight lightInfo;
+
+    public struct LightCollider
+    {
+        public LightCollider(Vector2 p0_, Vector2 p1_, Vector2 p2_, Vector2 p3_)
+        {
+            p0 = p0_;
+            p1 = p1_;
+            p2 = p2_;
+            p3 = p3_;
+        }
+
+        public Vector2 p0;
+        public Vector2 p1;
+        public Vector2 p2;
+        public Vector2 p3;
+    }
+
+    private Light2D flashLight;
+    private PolygonCollider2D lightCollider;
+
+    [SyncVar(hook = nameof(OnLightColliderChange))]
+    private LightCollider lightColliderInfo;
+
+    private bool clicked = false;   // 是否处于强光状态
+    private bool cooled = false;    // 是否处于冷却状态
+    public float duration = 3.0f;  // 强光持续时间
+    public float coolTime = 5.0f;  // 冷却时间
 
     // 组件
     private Animator animator;
     private Rigidbody2D rb;
-    private GameObject torch;
+    public GameObject arm;
 
     // 同步人物姓名
     public TextMeshProUGUI nameText;
@@ -58,7 +110,10 @@ public class Player : NetworkBehaviour
     {
         animator = transform.GetChild(1).GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        torch = transform.GetChild(1).GetChild(11).gameObject;
+        arm = transform.GetChild(1).GetChild(11).gameObject;
+        flashLight = arm.transform.GetChild(0).GetComponent<Light2D>();
+        arm.transform.GetChild(0).GetComponent<Torch>().owner = gameObject;
+        lightCollider = arm.transform.GetChild(0).GetComponent<PolygonCollider2D>();
 
         if (!isLocalPlayer) { return; }
 
@@ -67,6 +122,8 @@ public class Player : NetworkBehaviour
         moveJoystick = moveJoystickGO.GetComponent<FixedJoystick>();
         attackJoyStickGO = transform.Find("/Canvas/AttackJoystick").gameObject;
         attackJoystick = attackJoyStickGO.GetComponent<AttackJoystick>();
+        torchBtn = transform.Find("/Canvas/torchBtn").gameObject;
+        torchBtn.GetComponent<Button>().onClick.AddListener(TorchBtnOnClick);
 
         // 注册事件
         EventManager.Listen(EEventType.joystick_attack_up.ToString(), OnJoystickAttackUp);
@@ -85,6 +142,8 @@ public class Player : NetworkBehaviour
 
         direction = moveJoystick.Direction;
         SetFlip();
+        UpdateTorchStatus();
+        UpdateMove();
 
         MoveTorch(attackJoystick.Direction);
     }
@@ -94,7 +153,10 @@ public class Player : NetworkBehaviour
         if (!isLocalPlayer) { return; }
 
         // 移动
-        Move(moveJoystick.Direction);
+        if (canMove)
+        {
+            Move(moveJoystick.Direction);
+        }
     }
 
     // 切换动画
@@ -216,10 +278,10 @@ public class Player : NetworkBehaviour
             }
         }
 
-        torch.transform.localEulerAngles = new Vector3(0, 0, angle);
+        arm.transform.localEulerAngles = new Vector3(0, 0, angle);
     }
 
-    private void OnScoreChange(int _old, int _new)
+	private void OnScoreChange(int _old, int _new)
     {
         UpdateScoreText();
     }
@@ -238,5 +300,116 @@ public class Player : NetworkBehaviour
     public void CmdIncreaseScore(int amount)
     {
         score += amount;
+    }
+
+	private void TorchBtnOnClick()
+    {
+        CmdSetTorch(30, 9, 6);
+        Vector2 p0 = new Vector2(0, 9);
+        Vector2 p1 = new Vector2(-2.3f, 8.7f);
+        Vector2 p2 = new Vector2(0, 0.1f);
+        Vector2 p3 = new Vector2(2.3f, 8.7f);
+        CmdSetLightCollider(p0, p1, p2, p3);
+
+        if (isLocalPlayer)
+        {
+            torchBtn.GetComponent<Button>().enabled = false;
+            clicked = true;
+        }
+    }
+
+    private void TorchBtnCoolDown()
+    {
+        CmdSetTorch(120, 4.5f, 3);
+        Vector2 p0 = new Vector2(0, 4.5f);
+        Vector2 p1 = new Vector2(-3.8f, 2.3f);
+        Vector2 p2 = new Vector2(0, 0.1f);
+        Vector2 p3 = new Vector2(3.8f, 2.3f);
+        CmdSetLightCollider(p0, p1, p2, p3);
+    }
+
+    private void OnFlashLightChange(FlashLight _old, FlashLight _new)
+    {
+        flashLight.pointLightOuterAngle = lightInfo.angle;
+        flashLight.pointLightOuterRadius = lightInfo.radius;
+        flashLight.intensity = lightInfo.intensity;
+    }
+
+    private void OnLightColliderChange(LightCollider _old, LightCollider _new)
+    {
+        Vector2[] currPoints = new Vector2[4];
+        currPoints[0] = lightColliderInfo.p0;
+        currPoints[1] = lightColliderInfo.p1;
+        currPoints[2] = lightColliderInfo.p2;
+        currPoints[3] = lightColliderInfo.p3;
+        lightCollider.points = currPoints;
+    }
+
+    [Command]
+    private void CmdSetTorch(float angle, float radius, float intensity)
+    {
+        lightInfo = new FlashLight(angle, radius, intensity);
+    }
+
+    [Command]
+    private void CmdSetLightCollider(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+    {
+        lightColliderInfo = new LightCollider(p0, p1, p2, p3);
+    }
+
+    private void UpdateTorchStatus()
+    {
+        if (clicked == true)
+        {
+            duration -= Time.deltaTime;
+            if (duration <= 0.0f)
+            {
+                cooled = true;
+                clicked = false;
+                duration = 3.0f;
+                TorchBtnCoolDown();
+            }
+        }
+        if (cooled == true)
+        {
+            coolTime -= Time.deltaTime;
+            if (coolTime <= 0.0f)
+            {
+                cooled = false;
+                coolTime = 5.0f;
+                torchBtn.GetComponent<Button>().enabled = true;
+            }
+        }
+    }
+
+    private void UpdateMove()
+    {
+        if (!canMove)
+        {
+            canMoveTime -= Time.deltaTime;
+            if (canMoveTime <= 0.0f)
+            {
+                canMove = true;
+                canMoveTime = 2.0f;
+            }
+        }
+    }
+
+    public void Attack(GameObject other)
+    {
+        CmdAttack(other, moveJoystick.Direction.normalized);
+    }
+
+    [Command]
+    private void CmdAttack(GameObject other, Vector2 dir)
+    {
+        RpcAttack(other, dir);
+    }
+
+    [ClientRpc]
+    private void RpcAttack(GameObject other, Vector2 dir)
+    {
+        other.transform.GetComponent<Player>().canMove = false;
+        other.transform.GetComponent<Rigidbody2D>().AddForce(dir * 5.0f, ForceMode2D.Impulse);
     }
 }
