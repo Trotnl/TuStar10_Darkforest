@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 
+
 public class Resource : NetworkBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
@@ -11,21 +12,16 @@ public class Resource : NetworkBehaviour
 
             // 获取 Player 组件并增加得分
             Player player = other.GetComponent<Player>();
-            if (player != null && player.isServer)
-            {
+            // if (player != null && player.isServer)
+            // {
                 player.CmdIncreaseScore(1); // 每次增加1分
-            }
-
-            // CmdDestroyResource();
-            Destroy(gameObject);
-
-            
-
+                CmdDestroyResource();
+            // }       
         }
     }
 
-    /*
-    [Command]
+    
+    [Command(requiresAuthority = false)]
     void CmdDestroyResource()
     {
         Debug.Log("xx  CmdDestroyResource!");
@@ -38,5 +34,5 @@ public class Resource : NetworkBehaviour
         Debug.Log("xx   Destroyed!");
         Destroy(gameObject);
     }
-    */
+    
 }
