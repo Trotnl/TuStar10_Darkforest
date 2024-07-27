@@ -16,14 +16,15 @@ public class Resource : NetworkBehaviour
                 player.CmdIncreaseScore(1); // 每次增加1分
             }
 
-            CmdDestroyResource();
-            // Destroy(gameObject);
+            // CmdDestroyResource();
+            Destroy(gameObject);
 
             
 
         }
     }
 
+    /*
     [Command]
     void CmdDestroyResource()
     {
@@ -37,4 +38,5 @@ public class Resource : NetworkBehaviour
         Debug.Log("xx   Destroyed!");
         Destroy(gameObject);
     }
+    */
 }

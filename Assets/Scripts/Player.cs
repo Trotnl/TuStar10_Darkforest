@@ -2,10 +2,6 @@
 using TMPro;
 using UnityEngine;
 
-
-// Command：客户端调用，服务器执行
-// ClientRpc: 服务器调用，客户端执行
-// SyncVar与ClientRpc类似，用于修饰变量
 public class Player : NetworkBehaviour
 {
     // 移动
@@ -40,7 +36,7 @@ public class Player : NetworkBehaviour
 
     // 同步得分
     [SyncVar(hook = nameof(OnScoreChange))]
-    public int score;
+    private int score;
 
     // UI组件
     private TextMeshProUGUI scoreText;
@@ -60,7 +56,6 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        //sprite = GetComponent<SpriteRenderer>();
         animator = transform.GetChild(1).GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         torch = transform.GetChild(1).GetChild(11).gameObject;
@@ -89,13 +84,9 @@ public class Player : NetworkBehaviour
         if (!isLocalPlayer) { return; }
 
         direction = moveJoystick.Direction;
-<<<<<<< HEAD
-        CmdTorch(attackJoystick.Direction);
-=======
         SetFlip();
 
         MoveTorch(attackJoystick.Direction);
->>>>>>> c016c9c4e922d6a7e86c912baec8ee4abf10e551
     }
 
     private void FixedUpdate()
@@ -206,12 +197,10 @@ public class Player : NetworkBehaviour
                 {
                     angle = 360 - angle;
                 }
-                //angle *= transform.localScale.x;
             }
         }
         else if (transform.localScale.x == -1)
         {
-
             if (Mathf.Abs(torchDirection.x - 0) < 0.01f && Mathf.Abs(torchDirection.y - 0) < 0.01f)
             {
                 angle = 0.0f;
