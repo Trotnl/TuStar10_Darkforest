@@ -31,9 +31,8 @@ public class Player : NetworkBehaviour
     private string name;
 
     // 同步人物翻转
-    private SpriteRenderer sprite;
     [SyncVar(hook = nameof(OnFlipChange))]
-    private bool flipX;
+    private float currentX;
 
     // 同步动画
     [SyncVar(hook = nameof(OnAnimationChange))]
@@ -50,10 +49,10 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        sprite = GetComponent<SpriteRenderer>();
-        animator = GetComponent<Animator>();
+        //sprite = GetComponent<SpriteRenderer>();
+        animator = transform.GetChild(1).GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        torch = transform.GetChild(0).GetChild(1).gameObject;
+        torch = transform.GetChild(1).GetChild(11).gameObject;
 
         if (!isLocalPlayer) { return; }
 
@@ -100,7 +99,7 @@ public class Player : NetworkBehaviour
     // 人物翻转
     private void SetFlip()
     {
-        CmdFlip(direction.x < 0);
+        CmdFlip();
     }
 
     private void Move(Vector2 direction)
@@ -113,9 +112,16 @@ public class Player : NetworkBehaviour
         nameText.text = name;
     }
 
-    private void OnFlipChange(bool _old, bool _new)
+    private void OnFlipChange(System.Single _old, System.Single _new)
     {
-        sprite.flipX = flipX;
+        if (currentX < 0)
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else if (currentX > 0)
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
     }
 
     private void OnAnimationChange(bool _old, bool _new)
@@ -124,9 +130,9 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    private void CmdFlip(bool _flipX)
+    private void CmdFlip()
     {
-        flipX = _flipX;
+        currentX = moveJoystick.Direction.x;
     }
 
     [Command]
@@ -177,7 +183,41 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcTorch(Vector2 torchDirection)
     {
-        torch.transform.rotation = Quaternion.FromToRotation(Vector3.up, torchDirection);
-        Debug.Log(torchDirection.x + "" + torchDirection.y.ToString());
+        float angle = 0;
+        if (transform.localScale.x == 1)
+        {
+            if (Mathf.Abs(torchDirection.x - 0) < 0.01f && Mathf.Abs(torchDirection.y - 0) < 0.01f)
+            {
+                angle = 0.0f;
+            }
+            else
+            {
+                angle = Vector2.Angle(torchDirection, new Vector2(1, 0)) - 180;
+                if (torchDirection.y < 0)
+                {
+                    angle = 360 - angle;
+                }
+                //angle *= transform.localScale.x;
+            }
+        }
+        else if (transform.localScale.x == -1)
+        {
+
+            if (Mathf.Abs(torchDirection.x - 0) < 0.01f && Mathf.Abs(torchDirection.y - 0) < 0.01f)
+            {
+                angle = 0.0f;
+            }
+            else
+            {
+                angle = Vector2.Angle(torchDirection, new Vector2(1, 0)) - 180;
+                if (torchDirection.y < 0)
+                {
+                    angle = 360 - angle;
+                }
+                angle = -angle + 180;
+            }
+        }
+        
+        torch.transform.localEulerAngles = new Vector3(0, 0, angle);
     }
 }
