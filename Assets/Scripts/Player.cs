@@ -38,6 +38,13 @@ public class Player : NetworkBehaviour
     [SyncVar(hook = nameof(OnAnimationChange))]
     private bool run;
 
+    // 同步得分
+    [SyncVar(hook = nameof(OnScoreChange))]
+    public int score;
+
+    // UI组件
+    private TextMeshProUGUI scoreText;
+
     public override void OnStartLocalPlayer()
     {
         // 相机跟随
@@ -45,6 +52,10 @@ public class Player : NetworkBehaviour
         Camera.main.transform.localPosition = new Vector3(0, 0, -10);
 
         CmdSetupPlayer("Player" + Random.Range(100, 999));
+
+        // 绑定UI
+        scoreText = GameObject.Find("/Canvas/ScoreText").GetComponent<TextMeshProUGUI>();
+        UpdateScoreText();
     }
 
     private void Start()
@@ -78,7 +89,7 @@ public class Player : NetworkBehaviour
 
         if (!isLocalPlayer) { return; }
 
-        direction = moveJoystick.Direction; 
+        direction = moveJoystick.Direction;
         CmdTorch(attackJoystick.Direction);
     }
 
@@ -217,7 +228,28 @@ public class Player : NetworkBehaviour
                 angle = -angle + 180;
             }
         }
-        
+
         torch.transform.localEulerAngles = new Vector3(0, 0, angle);
+    }
+
+    private void OnScoreChange(int _old, int _new)
+    {
+        UpdateScoreText();
+    }
+
+    private void UpdateScoreText()
+    {
+        if (scoreText != null)
+        {
+            scoreText.text = "跃迁所需资源量 " + score + "/3";
+        }
+        Debug.Log("跃迁所需资源量 " + score + "/3");
+    }
+
+    // 增加得分方法
+    [Command]
+    public void CmdIncreaseScore(int amount)
+    {
+        score += amount;
     }
 }
