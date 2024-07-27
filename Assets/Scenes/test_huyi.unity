@@ -992,7 +992,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -1
-  m_Sprite: {fileID: 21300000, guid: ba9157293db54447cb1e5070198cbaf4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 83f2efdb601fed5478085f2dc2a395a7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -3299,7 +3299,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2107862023}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &479098780
 PrefabInstance:
@@ -4830,7 +4830,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2107862023}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &676269682
 MonoBehaviour:
@@ -5226,7 +5226,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2107862023}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &737325655
 PrefabInstance:
@@ -7649,7 +7649,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2107862023}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1126062716
 MonoBehaviour:
@@ -8464,7 +8464,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2107862023}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1315048962
 MonoBehaviour:
@@ -13494,11 +13494,6 @@ Transform:
   - {fileID: 1435466539}
   - {fileID: 182752372}
   - {fileID: 1252227767}
-  - {fileID: 1315048960}
-  - {fileID: 1126062715}
-  - {fileID: 676269681}
-  - {fileID: 711215165}
-  - {fileID: 474704969}
   - {fileID: 260095904}
   - {fileID: 646655331}
   - {fileID: 879371745}
@@ -13691,4 +13686,9 @@ SceneRoots:
   - {fileID: 1030249616}
   - {fileID: 1981788821}
   - {fileID: 328228334}
+  - {fileID: 1315048960}
+  - {fileID: 1126062715}
+  - {fileID: 676269681}
+  - {fileID: 711215165}
+  - {fileID: 474704969}
   - {fileID: 2107862023}
