@@ -1,7 +1,8 @@
 ﻿using Mirror;
 using TMPro;
 using UnityEngine;
-
+using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 
 // Command：客户端调用，服务器执行
 // ClientRpc: 服务器调用，客户端执行
@@ -20,10 +21,36 @@ public class Player : NetworkBehaviour
     public GameObject bullet;
     public float bulletSpeed = 7f;
 
+    // 手电筒
+    private GameObject torchBtn;
+    public struct FlashLight
+    {
+        public FlashLight(float angle_, float radius_, float intensity_)
+        {
+            angle = angle_;
+            radius = radius_;
+            intensity = intensity_;
+        }
+
+        public float angle;
+        public float radius;
+        public float intensity;
+    }
+
+    [SyncVar(hook = nameof(OnFlashLightChange))]
+    private FlashLight lightInfo;
+
+    private Light2D flashLight;
+
+    private bool clicked = false;   // 是否处于强光状态
+    private bool cooled = false;    // 是否处于冷却状态
+    public float duration = 3.0f;  // 强光持续时间
+    public float coolTime = 5.0f;  // 冷却时间
+
     // 组件
     private Animator animator;
     private Rigidbody2D rb;
-    private GameObject torch;
+    private GameObject arm;
 
     // 同步人物姓名
     public TextMeshProUGUI nameText;
@@ -52,7 +79,8 @@ public class Player : NetworkBehaviour
         //sprite = GetComponent<SpriteRenderer>();
         animator = transform.GetChild(1).GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        torch = transform.GetChild(1).GetChild(11).gameObject;
+        arm = transform.GetChild(1).GetChild(11).gameObject;
+        flashLight = arm.transform.GetChild(0).GetComponent<Light2D>();
 
         if (!isLocalPlayer) { return; }
 
@@ -61,6 +89,8 @@ public class Player : NetworkBehaviour
         moveJoystick = moveJoystickGO.GetComponent<FixedJoystick>();
         attackJoyStickGO = transform.Find("/Canvas/AttackJoystick").gameObject;
         attackJoystick = attackJoyStickGO.GetComponent<AttackJoystick>();
+        torchBtn = transform.Find("/Canvas/torchBtn").gameObject;
+        torchBtn.GetComponent<Button>().onClick.AddListener(TorchBtnOnClick);
 
         // 注册事件
         EventManager.Listen(EEventType.joystick_attack_up.ToString(), OnJoystickAttackUp);
@@ -79,6 +109,7 @@ public class Player : NetworkBehaviour
 
         direction = moveJoystick.Direction;
         SetFlip();
+        UpdateTorchStatus();
 
         MoveTorch(attackJoystick.Direction);
     }
@@ -212,6 +243,60 @@ public class Player : NetworkBehaviour
             }
         }
 
-        torch.transform.localEulerAngles = new Vector3(0, 0, angle);
+        arm.transform.localEulerAngles = new Vector3(0, 0, angle);
+    }
+
+    private void TorchBtnOnClick()
+    {
+        CmdSetTorch(30, 9, 6);
+
+        if (isLocalPlayer)
+        {
+            torchBtn.GetComponent<Button>().enabled = false;
+            clicked = true;
+        }
+    }
+
+    private void TorchBtnCoolDown()
+    {
+        CmdSetTorch(120, 4.5f, 3);
+    }
+
+    private void OnFlashLightChange(FlashLight _old, FlashLight _new)
+    {
+        flashLight.pointLightOuterAngle = lightInfo.angle;
+        flashLight.pointLightOuterRadius = lightInfo.radius;
+        flashLight.intensity = lightInfo.intensity;
+    }
+
+    [Command]
+    private void CmdSetTorch(float angle, float radius, float intensity)
+    {
+        lightInfo = new FlashLight(angle, radius, intensity);
+    }
+
+    private void UpdateTorchStatus()
+    {
+        if (clicked == true)
+        {
+            duration -= Time.deltaTime;
+            if (duration <= 0.0f)
+            {
+                cooled = true;
+                clicked = false;
+                duration = 3.0f;
+                TorchBtnCoolDown();
+            }
+        }
+        if (cooled == true)
+        {
+            coolTime -= Time.deltaTime;
+            if (coolTime <= 0.0f)
+            {
+                cooled = false;
+                coolTime = 5.0f;
+                torchBtn.GetComponent<Button>().enabled = true;
+            }
+        }
     }
 }
