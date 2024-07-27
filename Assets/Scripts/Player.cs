@@ -87,11 +87,12 @@ public class Player : NetworkBehaviour
     private bool run;
 
     // 同步得分
-    [SyncVar(hook = nameof(OnScoreChange))]
-    private int score;
+    //[SyncVar(hook = nameof(OnScoreChange))]
+    public int score;
 
     // UI组件
     private TextMeshProUGUI scoreText;
+    private Slider slider;
 
     public override void OnStartLocalPlayer()
     {
@@ -100,10 +101,6 @@ public class Player : NetworkBehaviour
         Camera.main.transform.localPosition = new Vector3(0, 0, -10);
 
         CmdSetupPlayer("Player" + Random.Range(100, 999));
-
-        // 绑定UI
-        scoreText = GameObject.Find("/Canvas/ScoreText").GetComponent<TextMeshProUGUI>();
-        UpdateScoreText();
     }
 
     private void Start()
@@ -114,6 +111,7 @@ public class Player : NetworkBehaviour
         flashLight = arm.transform.GetChild(0).GetComponent<Light2D>();
         arm.transform.GetChild(0).GetComponent<Torch>().owner = gameObject;
         lightCollider = arm.transform.GetChild(0).GetComponent<PolygonCollider2D>();
+        slider = transform.GetChild(0).GetChild(1).GetComponent<Slider>();
 
         if (!isLocalPlayer) { return; }
 
@@ -281,27 +279,6 @@ public class Player : NetworkBehaviour
         arm.transform.localEulerAngles = new Vector3(0, 0, angle);
     }
 
-	private void OnScoreChange(int _old, int _new)
-    {
-        UpdateScoreText();
-    }
-
-    private void UpdateScoreText()
-    {
-        if (scoreText != null)
-        {
-            scoreText.text = "跃迁所需资源量 " + score + "/3";
-        }
-        Debug.Log("跃迁所需资源量 " + score + "/3");
-    }
-
-    // 增加得分方法
-    [Command]
-    public void CmdIncreaseScore(int amount)
-    {
-        score += amount;
-    }
-
 	private void TorchBtnOnClick()
     {
         CmdSetTorch(30, 9, 6);
@@ -411,5 +388,34 @@ public class Player : NetworkBehaviour
     {
         other.transform.GetComponent<Player>().canMove = false;
         other.transform.GetComponent<Rigidbody2D>().AddForce(dir * 5.0f, ForceMode2D.Impulse);
+    }
+
+    public void UsePotral()
+    {
+        if (score >= 3)
+        {
+            // transform.position = 
+        }
+    }
+
+    public void GetResource(int amount)
+    {
+        // 如果是别的玩家捡到资源，直接跳过
+        if (!isLocalPlayer) return;
+
+        CmdGetResource(amount);
+    }
+
+    [Command]
+    private void CmdGetResource(int amount)
+    {
+        RpcGetResource(amount);
+    }
+
+    [ClientRpc]
+    private void RpcGetResource(int amount)
+    {
+        score += amount;
+        slider.value = score;
     }
 }
