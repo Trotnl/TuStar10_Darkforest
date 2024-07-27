@@ -85,12 +85,17 @@ public class Player : NetworkBehaviour
     void Update()
     {
         SetAnimation();
-        SetFlip();
 
         if (!isLocalPlayer) { return; }
 
         direction = moveJoystick.Direction;
+<<<<<<< HEAD
         CmdTorch(attackJoystick.Direction);
+=======
+        SetFlip();
+
+        MoveTorch(attackJoystick.Direction);
+>>>>>>> c016c9c4e922d6a7e86c912baec8ee4abf10e551
     }
 
     private void FixedUpdate()
@@ -110,7 +115,7 @@ public class Player : NetworkBehaviour
     // 人物翻转
     private void SetFlip()
     {
-        CmdFlip();
+        CmdFlip(direction.x);
     }
 
     private void Move(Vector2 direction)
@@ -123,7 +128,7 @@ public class Player : NetworkBehaviour
         nameText.text = name;
     }
 
-    private void OnFlipChange(System.Single _old, System.Single _new)
+    private void OnFlipChange(float _old, float _new)
     {
         if (currentX < 0)
         {
@@ -141,9 +146,9 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    private void CmdFlip()
+    private void CmdFlip(float x)
     {
-        currentX = moveJoystick.Direction.x;
+        currentX = x;
     }
 
     [Command]
@@ -185,14 +190,7 @@ public class Player : NetworkBehaviour
         CmdAttack((Vector2)arr[0]);
     }
 
-    [Command]
-    private void CmdTorch(Vector2 torchDirection)
-    {
-        RpcTorch(torchDirection);
-    }
-
-    [ClientRpc]
-    private void RpcTorch(Vector2 torchDirection)
+    private void MoveTorch(Vector2 torchDirection)
     {
         float angle = 0;
         if (transform.localScale.x == 1)
