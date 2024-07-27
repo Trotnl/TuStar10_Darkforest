@@ -93,6 +93,9 @@ public class Player : NetworkBehaviour
     // UI组件
     private TextMeshProUGUI scoreText;
     private Slider slider;
+    private GameObject canvas;
+
+    private PositionManager positionManager;
 
     public override void OnStartLocalPlayer()
     {
@@ -112,6 +115,8 @@ public class Player : NetworkBehaviour
         arm.transform.GetChild(0).GetComponent<Torch>().owner = gameObject;
         lightCollider = arm.transform.GetChild(0).GetComponent<PolygonCollider2D>();
         slider = transform.GetChild(0).GetChild(1).GetComponent<Slider>();
+        positionManager = transform.Find("/PositionManager").GetComponent<PositionManager>();
+        canvas = transform.GetChild(0).gameObject;
 
         if (!isLocalPlayer) { return; }
 
@@ -184,10 +189,12 @@ public class Player : NetworkBehaviour
         if (currentX < 0)
         {
             transform.localScale = new Vector3(1, 1, 1);
+            canvas.transform.localScale = new Vector3(1, 1, 1);
         }
         else if (currentX > 0)
         {
             transform.localScale = new Vector3(-1, 1, 1);
+            canvas.transform.localScale = new Vector3(-1, 1, 1);
         }
     }
 
@@ -392,9 +399,9 @@ public class Player : NetworkBehaviour
 
     public void UsePotral()
     {
-        if (score >= 3)
+        if (score == 3)
         {
-            // transform.position = 
+            transform.position = positionManager.layer2StartPosition.position;
         }
     }
 
@@ -415,7 +422,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcGetResource(int amount)
     {
-        score += amount;
+        score = Mathf.Min(score + amount, 3);
         slider.value = score;
     }
 }

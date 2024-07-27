@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3203826172234799535}
   - component: {fileID: 1436003770055382015}
   - component: {fileID: -6015137053729628333}
+  - component: {fileID: -1415871953065010871}
   m_Layer: 0
   m_Name: Potral
   m_TagString: Untagged
@@ -130,3 +131,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-1415871953065010871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8667099419839116557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf1ea2ae9a4fa0c43a8c09cf8d76027f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
