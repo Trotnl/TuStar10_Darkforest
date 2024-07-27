@@ -14,11 +14,13 @@ public class Player : NetworkBehaviour
     private GameObject moveJoystickGO;
     private FixedJoystick moveJoystick;
     private GameObject attackJoyStickGO;
-    private AttackJoystick attackJoystick;
+    public AttackJoystick attackJoystick;
 
     // 攻击
     public GameObject bullet;
     public float bulletSpeed = 7f;
+    public bool canMove = true;
+    public float canMoveTime = 2.0f;
 
     // 手电筒
     private GameObject torchBtn;
@@ -49,7 +51,7 @@ public class Player : NetworkBehaviour
     // 组件
     private Animator animator;
     private Rigidbody2D rb;
-    private GameObject arm;
+    public GameObject arm;
 
     // 同步人物姓名
     public TextMeshProUGUI nameText;
@@ -90,6 +92,7 @@ public class Player : NetworkBehaviour
         rb = GetComponent<Rigidbody2D>();
         arm = transform.GetChild(1).GetChild(11).gameObject;
         flashLight = arm.transform.GetChild(0).GetComponent<Light2D>();
+        arm.transform.GetChild(0).GetComponent<Torch>().owner = gameObject;
 
         if (!isLocalPlayer) { return; }
 
@@ -119,6 +122,7 @@ public class Player : NetworkBehaviour
         direction = moveJoystick.Direction;
         SetFlip();
         UpdateTorchStatus();
+        UpdateMove();
 
         MoveTorch(attackJoystick.Direction);
     }
@@ -128,7 +132,10 @@ public class Player : NetworkBehaviour
         if (!isLocalPlayer) { return; }
 
         // 移动
-        Move(moveJoystick.Direction);
+        if (canMove)
+        {
+            Move(moveJoystick.Direction);
+        }
     }
 
     // 切换动画
@@ -326,5 +333,36 @@ public class Player : NetworkBehaviour
                 torchBtn.GetComponent<Button>().enabled = true;
             }
         }
+    }
+
+    private void UpdateMove()
+    {
+        if (!canMove)
+        {
+            canMoveTime -= Time.deltaTime;
+            if (canMoveTime <= 0.0f)
+            {
+                canMove = true;
+                canMoveTime = 2.0f;
+            }
+        }
+    }
+
+    public void Attack(GameObject other)
+    {
+        CmdAttack(other, moveJoystick.Direction.normalized);
+    }
+
+    [Command]
+    private void CmdAttack(GameObject other, Vector2 dir)
+    {
+        RpcAttack(other, dir);
+    }
+
+    [ClientRpc]
+    private void RpcAttack(GameObject other, Vector2 dir)
+    {
+        other.transform.GetComponent<Player>().canMove = false;
+        other.transform.GetComponent<Rigidbody2D>().AddForce(dir * 5.0f, ForceMode2D.Impulse);
     }
 }
