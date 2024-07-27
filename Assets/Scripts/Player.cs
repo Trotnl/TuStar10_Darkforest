@@ -3,7 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
-
 // Command：客户端调用，服务器执行
 // ClientRpc: 服务器调用，客户端执行
 // SyncVar与ClientRpc类似，用于修饰变量
@@ -65,6 +64,13 @@ public class Player : NetworkBehaviour
     [SyncVar(hook = nameof(OnAnimationChange))]
     private bool run;
 
+    // 同步得分
+    [SyncVar(hook = nameof(OnScoreChange))]
+    private int score;
+
+    // UI组件
+    private TextMeshProUGUI scoreText;
+
     public override void OnStartLocalPlayer()
     {
         // 相机跟随
@@ -72,11 +78,14 @@ public class Player : NetworkBehaviour
         Camera.main.transform.localPosition = new Vector3(0, 0, -10);
 
         CmdSetupPlayer("Player" + Random.Range(100, 999));
+
+        // 绑定UI
+        scoreText = GameObject.Find("/Canvas/ScoreText").GetComponent<TextMeshProUGUI>();
+        UpdateScoreText();
     }
 
     private void Start()
     {
-        //sprite = GetComponent<SpriteRenderer>();
         animator = transform.GetChild(1).GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         arm = transform.GetChild(1).GetChild(11).gameObject;
@@ -222,12 +231,10 @@ public class Player : NetworkBehaviour
                 {
                     angle = 360 - angle;
                 }
-                //angle *= transform.localScale.x;
             }
         }
         else if (transform.localScale.x == -1)
         {
-
             if (Mathf.Abs(torchDirection.x - 0) < 0.01f && Mathf.Abs(torchDirection.y - 0) < 0.01f)
             {
                 angle = 0.0f;
@@ -246,7 +253,28 @@ public class Player : NetworkBehaviour
         arm.transform.localEulerAngles = new Vector3(0, 0, angle);
     }
 
-    private void TorchBtnOnClick()
+	private void OnScoreChange(int _old, int _new)
+    {
+        UpdateScoreText();
+    }
+
+    private void UpdateScoreText()
+    {
+        if (scoreText != null)
+        {
+            scoreText.text = "跃迁所需资源量 " + score + "/3";
+        }
+        Debug.Log("跃迁所需资源量 " + score + "/3");
+    }
+
+    // 增加得分方法
+    [Command]
+    public void CmdIncreaseScore(int amount)
+    {
+        score += amount;
+    }
+
+	private void TorchBtnOnClick()
     {
         CmdSetTorch(30, 9, 6);
 
