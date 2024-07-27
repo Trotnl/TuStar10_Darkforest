@@ -78,8 +78,8 @@ public class Player : NetworkBehaviour
 
         if (!isLocalPlayer) { return; }
 
-        direction = moveJoystick.Direction; 
-        CmdTorch(attackJoystick.Direction);
+        direction = moveJoystick.Direction;
+        MoveTorch(attackJoystick.Direction);
     }
 
     private void FixedUpdate()
@@ -99,7 +99,7 @@ public class Player : NetworkBehaviour
     // 人物翻转
     private void SetFlip()
     {
-        CmdFlip();
+        CmdFlip(moveJoystick.Direction.x);
     }
 
     private void Move(Vector2 direction)
@@ -112,7 +112,7 @@ public class Player : NetworkBehaviour
         nameText.text = name;
     }
 
-    private void OnFlipChange(System.Single _old, System.Single _new)
+    private void OnFlipChange(float _old, float _new)
     {
         if (currentX < 0)
         {
@@ -130,9 +130,9 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    private void CmdFlip()
+    private void CmdFlip(float x)
     {
-        currentX = moveJoystick.Direction.x;
+        currentX = x;
     }
 
     [Command]
@@ -174,14 +174,7 @@ public class Player : NetworkBehaviour
         CmdAttack((Vector2)arr[0]);
     }
 
-    [Command]
-    private void CmdTorch(Vector2 torchDirection)
-    {
-        RpcTorch(torchDirection);
-    }
-
-    [ClientRpc]
-    private void RpcTorch(Vector2 torchDirection)
+    private void MoveTorch(Vector2 torchDirection)
     {
         float angle = 0;
         if (transform.localScale.x == 1)
@@ -217,7 +210,7 @@ public class Player : NetworkBehaviour
                 angle = -angle + 180;
             }
         }
-        
+
         torch.transform.localEulerAngles = new Vector3(0, 0, angle);
     }
 }
