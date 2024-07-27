@@ -12,8 +12,6 @@ public class AttackJoystick : FixedJoystick
 
     public override void OnPointerUp(PointerEventData eventData)
     {
-        //EventManager.Trigger(EEventType.joystick_attack_up.ToString(), Direction);
-
         base.OnPointerUp(eventData);
     }
 }

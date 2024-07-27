@@ -41,7 +41,27 @@ public class Player : NetworkBehaviour
     [SyncVar(hook = nameof(OnFlashLightChange))]
     private FlashLight lightInfo;
 
+    public struct LightCollider
+    {
+        public LightCollider(Vector2 p0_, Vector2 p1_, Vector2 p2_, Vector2 p3_)
+        {
+            p0 = p0_;
+            p1 = p1_;
+            p2 = p2_;
+            p3 = p3_;
+        }
+
+        public Vector2 p0;
+        public Vector2 p1;
+        public Vector2 p2;
+        public Vector2 p3;
+    }
+
     private Light2D flashLight;
+    private PolygonCollider2D lightCollider;
+
+    [SyncVar(hook = nameof(OnLightColliderChange))]
+    private LightCollider lightColliderInfo;
 
     private bool clicked = false;   // 是否处于强光状态
     private bool cooled = false;    // 是否处于冷却状态
@@ -93,6 +113,7 @@ public class Player : NetworkBehaviour
         arm = transform.GetChild(1).GetChild(11).gameObject;
         flashLight = arm.transform.GetChild(0).GetComponent<Light2D>();
         arm.transform.GetChild(0).GetComponent<Torch>().owner = gameObject;
+        lightCollider = arm.transform.GetChild(0).GetComponent<PolygonCollider2D>();
 
         if (!isLocalPlayer) { return; }
 
@@ -284,6 +305,11 @@ public class Player : NetworkBehaviour
 	private void TorchBtnOnClick()
     {
         CmdSetTorch(30, 9, 6);
+        Vector2 p0 = new Vector2(0, 9);
+        Vector2 p1 = new Vector2(-2.3f, 8.7f);
+        Vector2 p2 = new Vector2(0, 0.1f);
+        Vector2 p3 = new Vector2(2.3f, 8.7f);
+        CmdSetLightCollider(p0, p1, p2, p3);
 
         if (isLocalPlayer)
         {
@@ -295,6 +321,11 @@ public class Player : NetworkBehaviour
     private void TorchBtnCoolDown()
     {
         CmdSetTorch(120, 4.5f, 3);
+        Vector2 p0 = new Vector2(0, 4.5f);
+        Vector2 p1 = new Vector2(-3.8f, 2.3f);
+        Vector2 p2 = new Vector2(0, 0.1f);
+        Vector2 p3 = new Vector2(3.8f, 2.3f);
+        CmdSetLightCollider(p0, p1, p2, p3);
     }
 
     private void OnFlashLightChange(FlashLight _old, FlashLight _new)
@@ -304,10 +335,26 @@ public class Player : NetworkBehaviour
         flashLight.intensity = lightInfo.intensity;
     }
 
+    private void OnLightColliderChange(LightCollider _old, LightCollider _new)
+    {
+        Vector2[] currPoints = new Vector2[4];
+        currPoints[0] = lightColliderInfo.p0;
+        currPoints[1] = lightColliderInfo.p1;
+        currPoints[2] = lightColliderInfo.p2;
+        currPoints[3] = lightColliderInfo.p3;
+        lightCollider.points = currPoints;
+    }
+
     [Command]
     private void CmdSetTorch(float angle, float radius, float intensity)
     {
         lightInfo = new FlashLight(angle, radius, intensity);
+    }
+
+    [Command]
+    private void CmdSetLightCollider(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
+    {
+        lightColliderInfo = new LightCollider(p0, p1, p2, p3);
     }
 
     private void UpdateTorchStatus()

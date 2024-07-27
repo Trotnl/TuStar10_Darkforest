@@ -833,6 +833,7 @@ MonoBehaviour:
   bullet: {fileID: 3230035702701911184, guid: 28fd1fa8bb5606e478e0d393c9203f0a, type: 3}
   bulletSpeed: 7
   canMove: 1
+  canMoveTime: 2
   duration: 3
   coolTime: 5
   arm: {fileID: 0}
