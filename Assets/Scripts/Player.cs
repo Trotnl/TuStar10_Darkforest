@@ -74,11 +74,12 @@ public class Player : NetworkBehaviour
     void Update()
     {
         SetAnimation();
-        SetFlip();
 
         if (!isLocalPlayer) { return; }
 
         direction = moveJoystick.Direction;
+        SetFlip();
+
         MoveTorch(attackJoystick.Direction);
     }
 
@@ -99,7 +100,7 @@ public class Player : NetworkBehaviour
     // 人物翻转
     private void SetFlip()
     {
-        CmdFlip(moveJoystick.Direction.x);
+        CmdFlip(direction.x);
     }
 
     private void Move(Vector2 direction)
