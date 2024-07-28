@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -58,13 +60,18 @@ public class AudioManager : MonoBehaviour
                 source.Play();
 
             audioDict.Add(sound.clip.name, source);
-
         }
     }
 
-    public static void PlayAudio(string name, bool isWait = false)
+    public static void PlayAudio()
     {
-        instance.audioDict[name].Play();
+        // foreach (var key in instance.audioDict.Keys)
+        // {
+        //    Debug.Log(key);
+        // }
+        Debug.Log("PlayAudio!");
+        instance.audioDict["Win"].Play();
+
     }
 
     public static void StopAudio(string name)
