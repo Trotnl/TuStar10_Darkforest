@@ -19,12 +19,14 @@ public class CanvasHUD : NetworkBehaviour
 
     public TMP_Text playerCountText;
 
+    public bool isBegin;
+
     private void Start()
     {
         // Update the canvas text if you have manually changed network managers address from the game object before starting the game scene
-        if (NetworkManager.singleton.networkAddress != "localhost")
-        {
-            inputFieldAddress.text = NetworkManager.singleton.networkAddress;
+        if (NetworkManager.singleton.networkAddress != "localhost") 
+        { 
+            inputFieldAddress.text = NetworkManager.singleton.networkAddress; 
         }
 
         // Adds a listener to the main input field and invokes a method when the value changes.
@@ -37,6 +39,8 @@ public class CanvasHUD : NetworkBehaviour
         btnStop.onClick.AddListener(BtnStop);
 
         LoadingText.SetActive(false);
+
+        isBegin = false;
 
         Debug.Log("active");
 
@@ -88,80 +92,88 @@ public class CanvasHUD : NetworkBehaviour
 
         SetupCanvas();
     }
-    public void SetupCanvas()
-    {
-        // Here we will dump majority of the canvas UI that may be changed.
-        Debug.Log("SetupCanvas");
-
-        if (!NetworkClient.isConnected && !NetworkServer.active)
+        public void SetupCanvas()
         {
-            if (NetworkClient.active)
+            // Here we will dump majority of the canvas UI that may be changed.
+            Debug.Log("SetupCanvas");
+
+            if (!NetworkClient.isConnected && !NetworkServer.active)
+            {
+                if (NetworkClient.active)
+                {
+                    panelStart.SetActive(false);
+                    LoadingText.SetActive(true);
+                    panelStop.SetActive(true);
+                    clientText.text = "Connecting to " + NetworkManager.singleton.networkAddress + "..";
+                }
+                else
+                {
+                    panelStart.SetActive(true);
+                    LoadingText.SetActive(false);
+                    panelStop.SetActive(false);
+                }
+            }
+            else
             {
                 panelStart.SetActive(false);
                 LoadingText.SetActive(true);
                 panelStop.SetActive(true);
-                clientText.text = "Connecting to " + NetworkManager.singleton.networkAddress + "..";
-            }
-            else
-            {
-                panelStart.SetActive(true);
-                LoadingText.SetActive(false);
-                panelStop.SetActive(false);
+
+                // server / client status message
+                if (NetworkServer.active)
+                {
+                    serverText.text = "Server: active. Transport: " + Transport.active;
+                    // Note, older mirror versions use: Transport.activeTransport
+                }
+                if (NetworkClient.isConnected)
+                {
+                    clientText.text = "Client: address=" + NetworkManager.singleton.networkAddress;
+                }
             }
         }
-        else
-        {
-            panelStart.SetActive(false);
-            LoadingText.SetActive(true);
-            panelStop.SetActive(true);
 
-            // server / client status message
+        //public void WaitingPlayer()
+        //{
+
+        //}
+
+        void Update()
+        {
             if (NetworkServer.active)
             {
-                serverText.text = "Server: active. Transport: " + Transport.active;
-                // Note, older mirror versions use: Transport.activeTransport
+                UpdateServerPlayerCount();
+                Debug.Log("Updating...");
+                Debug.Log(isBegin);
             }
-            if (NetworkClient.isConnected)
+        }
+
+        [Server]
+        void UpdateServerPlayerCount()
+        {
+            int onlinePlayerCount = NetworkServer.connections.Count;
+            RpcUpdatePlayerCount(onlinePlayerCount);
+        }
+
+        [ClientRpc]
+        void RpcUpdatePlayerCount(int count)
+        {
+            if (playerCountText != null)
             {
-                clientText.text = "Client: address=" + NetworkManager.singleton.networkAddress;
+                playerCountText.text = "当前在线人数: " + count;
             }
-        }
-    }
 
-    //public void WaitingPlayer()
-    //{
+            if (count >= 2) 
+            {
+                LoadingImage.SetActive(false);
+                LoadingText.SetActive(false);
+                isBegin = true;
+            }
 
-    //}
-
-    void Update()
-    {
-        if (NetworkServer.active)
-        {
-            UpdateServerPlayerCount();
-            Debug.Log("Updating...");
-        }
-    }
-
-    [Server]
-    void UpdateServerPlayerCount()
-    {
-        int onlinePlayerCount = NetworkServer.connections.Count;
-        Debug.Log(onlinePlayerCount);
-        RpcUpdatePlayerCount(onlinePlayerCount);
-    }
-
-    [ClientRpc]
-    void RpcUpdatePlayerCount(int count)
-    {
-        if (playerCountText != null)
-        {
-            playerCountText.text = "当前在线人数: " + count;
+            if (count < 2)
+            {
+            LoadingImage.SetActive(true);
+            LoadingText.SetActive(true);
         }
 
-        if (count == 2)
-        {
-            LoadingText.SetActive(false);
-            LoadingImage.SetActive(false);
         }
     }
-}
