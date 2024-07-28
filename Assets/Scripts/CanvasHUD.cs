@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CanvasHUD : MonoBehaviour
+public class CanvasHUD : NetworkBehaviour
 {
     public GameObject panelStart;
     public GameObject panelStop;
@@ -13,6 +13,11 @@ public class CanvasHUD : MonoBehaviour
 
     public TextMeshProUGUI serverText;
     public TextMeshProUGUI clientText;
+
+    public GameObject LoadingText;
+    public GameObject LoadingImage;
+
+    public TMP_Text playerCountText;
 
     private void Start()
     {
@@ -30,6 +35,10 @@ public class CanvasHUD : MonoBehaviour
         btnServer.onClick.AddListener(BtnServer);
         btnClient.onClick.AddListener(BtnClient);
         btnStop.onClick.AddListener(BtnStop);
+
+        LoadingText.SetActive(false);
+
+        Debug.Log("active");
 
         // This updates the Unity canvas, we have to manually call it every change, unlike legacy OnGUI.
         SetupCanvas();
@@ -79,40 +88,86 @@ public class CanvasHUD : MonoBehaviour
 
         SetupCanvas();
     }
-
-    public void SetupCanvas()
-    {
-        // Here we will dump majority of the canvas UI that may be changed.
-
-        if (!NetworkClient.isConnected && !NetworkServer.active)
+        public void SetupCanvas()
         {
-            if (NetworkClient.active)
+            // Here we will dump majority of the canvas UI that may be changed.
+            Debug.Log("SetupCanvas");
+
+            if (!NetworkClient.isConnected && !NetworkServer.active)
             {
-                panelStart.SetActive(false);
-                panelStop.SetActive(true);
-                clientText.text = "Connecting to " + NetworkManager.singleton.networkAddress + "..";
+                if (NetworkClient.active)
+                {
+                    panelStart.SetActive(false);
+                    LoadingText.SetActive(true);
+                    panelStop.SetActive(true);
+                    clientText.text = "Connecting to " + NetworkManager.singleton.networkAddress + "..";
+                }
+                else
+                {
+                    panelStart.SetActive(true);
+                    LoadingText.SetActive(false);
+                    panelStop.SetActive(false);
+                }
             }
             else
             {
-                panelStart.SetActive(true);
-                panelStop.SetActive(false);
+                panelStart.SetActive(false);
+                LoadingText.SetActive(true);
+                panelStop.SetActive(true);
+
+                // server / client status message
+                if (NetworkServer.active)
+                {
+                    serverText.text = "Server: active. Transport: " + Transport.active;
+                    // Note, older mirror versions use: Transport.activeTransport
+                }
+                if (NetworkClient.isConnected)
+                {
+                    clientText.text = "Client: address=" + NetworkManager.singleton.networkAddress;
+                }
             }
         }
-        else
-        {
-            panelStart.SetActive(false);
-            panelStop.SetActive(true);
 
-            // server / client status message
+        //public void WaitingPlayer()
+        //{
+
+        //}
+
+        void Update()
+        {
             if (NetworkServer.active)
             {
-                serverText.text = "Server: active. Transport: " + Transport.active;
-                // Note, older mirror versions use: Transport.activeTransport
-            }
-            if (NetworkClient.isConnected)
-            {
-                clientText.text = "Client: address=" + NetworkManager.singleton.networkAddress;
+                UpdateServerPlayerCount();
+                Debug.Log("Updating...");
             }
         }
+
+        [Server]
+        void UpdateServerPlayerCount()
+        {
+            int onlinePlayerCount = NetworkServer.connections.Count;
+            RpcUpdatePlayerCount(onlinePlayerCount);
+        }
+
+        [ClientRpc]
+        void RpcUpdatePlayerCount(int count)
+        {
+            if (playerCountText != null)
+            {
+                playerCountText.text = "当前在线人数: " + count;
+            }
+
+            if (count >= 2) 
+            {
+                LoadingImage.SetActive(false);
+                LoadingText.SetActive(false);
+            }
+
+            if (count < 2)
+            {
+            LoadingImage.SetActive(true);
+            LoadingText.SetActive(true);
+        }
+
+        }
     }
-}
