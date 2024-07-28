@@ -8,7 +8,7 @@ public class GameTimer : MonoBehaviour
     public TextMeshProUGUI timerText; // UI 显示计时器的 TextMeshPro 组件
     public float gameDuration = 300f; // 总游戏时间，单位秒
     private float elapsedTime = 0f;
-    private bool timerStarted = true;
+    private bool timerStarted = false;
 
     //public GameObject level1WarpPoint; // 地图一层的跃迁点
     //public GameObject level2WarpPoint; // 地图二层的跃迁点
@@ -19,6 +19,7 @@ public class GameTimer : MonoBehaviour
 
     void Start()
     {
+        elapsedTime = 0;
         //    level1WarpPoint.SetActive(false);
         //    level2WarpPoint.SetActive(false);
         UpdateTimerDisplay();
@@ -28,6 +29,11 @@ public class GameTimer : MonoBehaviour
     {
         if (gameEnded || !timerStarted)
             return;
+
+        if (transform.Find("/Canvas").GetComponent<CanvasHUD>().isBegin && !timerStarted)
+        {
+            StartTimer();
+        }
 
         elapsedTime += Time.deltaTime;
         UpdateTimerDisplay();
