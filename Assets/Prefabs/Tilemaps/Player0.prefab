@@ -1092,6 +1092,7 @@ MonoBehaviour:
   arm: {fileID: 0}
   nameText: {fileID: 3040539631868056190}
   score: 0
+  currentIndex: 0
 --- !u!1 &7050768382026661964
 GameObject:
   m_ObjectHideFlags: 0

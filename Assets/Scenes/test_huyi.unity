@@ -21033,7 +21033,7 @@ MonoBehaviour:
   offlineScene: Assets/Scenes/test_huyi.unity
   onlineScene: Assets/Scenes/test_huyi.unity
   transport: {fileID: 1315048962}
-  networkAddress: localhost
+  networkAddress: 172.16.62.70
   maxConnections: 100
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60

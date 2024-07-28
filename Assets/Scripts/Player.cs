@@ -304,8 +304,9 @@ public class Player : NetworkBehaviour
                 angle = -angle + 180;
             }
         }
-
+        
         arm.transform.localEulerAngles = new Vector3(0, 0, angle);
+        Debug.Log(arm.transform.localEulerAngles);
     }
 
 	private void TorchBtnOnClick()
