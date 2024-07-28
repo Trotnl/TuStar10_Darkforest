@@ -444,10 +444,14 @@ public class Player : NetworkBehaviour
             }
             else if (index == 3)
             {
-                //transform.position = positionManager.layer3StartPosition.position;
-                //cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
+                transform.position = positionManager.layer3StartPosition.position;
+                cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
             }
-            
+            else if (index == 4)
+            {
+                // 游戏结束
+            }
+
             CmdClearScore();
         }
     }
@@ -496,13 +500,13 @@ public class Player : NetworkBehaviour
                 speed = 8.0f;
                 break;
             case 1:
-                speed = 6.0f;
+                speed = 7.0f;
                 break;
             case 2:
-                speed = 4.0f;
+                speed = 6.0f;
                 break;
             case 3:
-                speed = 2.0f;
+                speed = 4.0f;
                 break;
         }
     }
