@@ -17,9 +17,9 @@ public class CanvasHUD : MonoBehaviour
     private void Start()
     {
         // Update the canvas text if you have manually changed network managers address from the game object before starting the game scene
-        if (NetworkManager.singleton.networkAddress != "localhost") 
-        { 
-            inputFieldAddress.text = NetworkManager.singleton.networkAddress; 
+        if (NetworkManager.singleton.networkAddress != "localhost")
+        {
+            inputFieldAddress.text = NetworkManager.singleton.networkAddress;
         }
 
         // Adds a listener to the main input field and invokes a method when the value changes.
@@ -35,7 +35,7 @@ public class CanvasHUD : MonoBehaviour
         SetupCanvas();
     }
 
-    // Invoked when the value of the text field changes.
+    //Invoked when the value of the text field changes.
     public void ValueChangeCheck()
     {
         NetworkManager.singleton.networkAddress = inputFieldAddress.text;

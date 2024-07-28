@@ -58,6 +58,7 @@ public class Player : NetworkBehaviour
 
         // 绑定摇杆
         moveJoystickGO = transform.Find("/Canvas/MoveJoystick").gameObject;
+
         moveJoystick = moveJoystickGO.GetComponent<FixedJoystick>();
         attackJoyStickGO = transform.Find("/Canvas/AttackJoystick").gameObject;
         attackJoystick = attackJoyStickGO.GetComponent<AttackJoystick>();
@@ -79,7 +80,7 @@ public class Player : NetworkBehaviour
         if (!isLocalPlayer) { return; }
 
         direction = moveJoystick.Direction; 
-        CmdTorch(attackJoystick.Direction);
+        //CmdTorch(attackJoystick.Direction);
     }
 
     private void FixedUpdate()

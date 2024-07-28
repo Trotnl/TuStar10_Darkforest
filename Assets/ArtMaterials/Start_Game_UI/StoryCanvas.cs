@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement; // 导入命名空间
 
 public class FadeInAndSwitchCanvas : MonoBehaviour
 {
     public TextMeshProUGUI textComponent;
     public TextMeshProUGUI skipHintTextComponent;
-    public GameObject nextCanvas;
+    public string nextSceneName = "DarkScenes"; // 目标场景名称
     public float fadeDuration = 5.0f; // 渐变持续时间
     public float delayBeforeHint = 0f; // 提示出现前的延迟
 
@@ -83,9 +84,9 @@ public class FadeInAndSwitchCanvas : MonoBehaviour
 
     private void SwitchToNextCanvas()
     {
-        // 启用下一部分的 Canvas，禁用当前 Canvas
-        nextCanvas.SetActive(true);
-        gameObject.SetActive(false);
+        // 切换到另一个场景，这里使用场景名称
+        nextSceneName = "Dark_scenes";
+        SceneManager.LoadScene(nextSceneName);
     }
 
     private void ShowSkipHint()
