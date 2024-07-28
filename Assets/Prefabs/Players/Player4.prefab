@@ -1153,7 +1153,6 @@ MonoBehaviour:
   arm: {fileID: 0}
   nameText: {fileID: 5278433339805481531}
   score: 0
-  currentIndex: 0
 --- !u!50 &3990864806932236036
 Rigidbody2D:
   serializedVersion: 4
@@ -1215,11 +1214,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: c876913161a49474b9c141dc3521684d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.277211
+      value: -2.2772114
       objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: c876913161a49474b9c141dc3521684d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.002479816
+      value: 0.0024798159
       objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: c876913161a49474b9c141dc3521684d, type: 3}
       propertyPath: m_LocalRotation.w
