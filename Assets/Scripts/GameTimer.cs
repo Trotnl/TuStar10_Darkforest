@@ -27,13 +27,15 @@ public class GameTimer : MonoBehaviour
 
     void Update()
     {
-        if (gameEnded || !timerStarted)
+        if (gameEnded)
             return;
-
-        if (transform.Find("/Canvas").GetComponent<CanvasHUD>().isBegin && !timerStarted)
+        Debug.Log("111");
+        if (!transform.Find("/Canvas").GetComponent<CanvasHUD>().isBegin)
         {
-            StartTimer();
+            Debug.Log("222");
+            return;
         }
+
 
         elapsedTime += Time.deltaTime;
         UpdateTimerDisplay();
@@ -67,10 +69,7 @@ public class GameTimer : MonoBehaviour
         timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
-    public void StartTimer()
-    {
-        timerStarted = true;
-    }
+
     /*
      * TODO:
      * if ( ISREADY )

@@ -143,7 +143,6 @@ public class CanvasHUD : NetworkBehaviour
             {
                 UpdateServerPlayerCount();
                 Debug.Log("Updating...");
-                Debug.Log(isBegin);
             }
         }
 
@@ -167,7 +166,8 @@ public class CanvasHUD : NetworkBehaviour
                 LoadingImage.SetActive(false);
                 LoadingText.SetActive(false);
                 isBegin = true;
-            }
+                //Debug.Log(isBegin);
+        }
 
             if (count < 2)
             {
