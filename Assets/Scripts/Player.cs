@@ -461,28 +461,7 @@ public class Player : NetworkBehaviour
         currentIndex = index;
         if (score == 3)
         {
-            //if (currentIndex == 2)
-            //{
-            //    CmdSetTrans(true);
-            //    //animator.SetTrigger("trans");
-            //    //transform.position = positionManager.layer2StartPosition.position;
-            //    //cameraMove.box = transform.Find("/Layer2/CameraBorder").gameObject;
-
-            //    //CmdSetTrans(false);
-            //}
-            //else if (currentIndex == 3)
-            //{
             CmdSetTrans(true);
-                //transform.position = positionManager.layer3StartPosition.position;
-                //cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
-                //CmdSetTrans(false);
-            //}
-            //else if (index == 4)
-            //{
-            //    // 游戏结束
-            //}
-
-            
         }
     }
 
