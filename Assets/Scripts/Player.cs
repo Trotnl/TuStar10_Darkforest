@@ -86,15 +86,12 @@ public class Player : NetworkBehaviour
     private float currentX;
 
     // 同步动画
-    [SyncVar(hook = nameof(OnRunChange))]
+    [SyncVar(hook = nameof(OnAnimationChange))]
     private bool run;
 
-    [SyncVar(hook = nameof(OnTransChange))]
-    private bool trans;
-
     // 同步得分
+    //[SyncVar(hook = nameof(OnScoreChange))]
     public int score;
-    public int currentIndex;
 
     // UI组件
     private TextMeshProUGUI scoreText;
@@ -176,7 +173,7 @@ public class Player : NetworkBehaviour
     // 切换动画
     void SetAnimation()
     {
-        CmdSetRun(direction != Vector2.zero);
+        CmdSetAnimation(direction != Vector2.zero);
     }
 
     // 人物翻转
@@ -217,14 +214,9 @@ public class Player : NetworkBehaviour
         }
     }
 
-    private void OnRunChange(bool _old, bool _new)
+    private void OnAnimationChange(bool _old, bool _new)
     {
         animator.SetBool("run", run);
-    }
-
-    private void OnTransChange(bool _old, bool _new)
-    {
-        animator.SetTrigger("trans");
     }
 
     [Command]
@@ -240,15 +232,9 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    private void CmdSetRun(bool _run)
+    private void CmdSetAnimation(bool _run)
     {
         run = _run;
-    }
-
-    [Command]
-    private void CmdSetTrans(bool _trans)
-    {
-        trans = _trans;
     }
 
     [Command]
@@ -312,9 +298,8 @@ public class Player : NetworkBehaviour
                 angle = -angle + 180;
             }
         }
-        
+
         arm.transform.localEulerAngles = new Vector3(0, 0, angle);
-        Debug.Log(arm.transform.localEulerAngles);
     }
 
 	private void TorchBtnOnClick()
@@ -458,31 +443,24 @@ public class Player : NetworkBehaviour
 
     public void UsePotral(int index)
     {
-        currentIndex = index;
         if (score == 3)
         {
-            //if (currentIndex == 2)
-            //{
-            //    CmdSetTrans(true);
-            //    //animator.SetTrigger("trans");
-            //    //transform.position = positionManager.layer2StartPosition.position;
-            //    //cameraMove.box = transform.Find("/Layer2/CameraBorder").gameObject;
+            if (index == 2)
+            {
+                transform.position = positionManager.layer2StartPosition.position;
+                cameraMove.box = transform.Find("/Layer2/CameraBorder").gameObject;
+            }
+            else if (index == 3)
+            {
+                transform.position = positionManager.layer3StartPosition.position;
+                cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
+            }
+            else if (index == 4)
+            {
+                // 游戏结束
+            }
 
-            //    //CmdSetTrans(false);
-            //}
-            //else if (currentIndex == 3)
-            //{
-            CmdSetTrans(true);
-                //transform.position = positionManager.layer3StartPosition.position;
-                //cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
-                //CmdSetTrans(false);
-            //}
-            //else if (index == 4)
-            //{
-            //    // 游戏结束
-            //}
-
-            
+            CmdClearScore();
         }
     }
 
@@ -539,20 +517,5 @@ public class Player : NetworkBehaviour
                 speed = 4.0f;
                 break;
         }
-    }
-
-    public void ChangePosition()
-    {
-        if (currentIndex == 2)
-        {
-            transform.position = positionManager.layer2StartPosition.position;
-            cameraMove.box = transform.Find("/Layer2/CameraBorder").gameObject;
-        }
-        else if (currentIndex == 3)
-        {
-            transform.position = positionManager.layer3StartPosition.position;
-            cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
-        }
-        CmdClearScore();
     }
 }
