@@ -1084,6 +1084,9 @@ MonoBehaviour:
   bulletSpeed: 7
   canMove: 1
   canMoveTime: 2
+  invincibleTime: 1
+  invincible: 0
+  resource: {fileID: 5183396979349314480, guid: 5ba03db1c4dcf32458f5e49d7686890e, type: 3}
   duration: 3
   coolTime: 5
   arm: {fileID: 0}

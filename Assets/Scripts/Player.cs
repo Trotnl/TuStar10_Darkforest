@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class Player : NetworkBehaviour
 {
     // 移动
-    public float speed = 5f;
+    public float speed = 8f;
     private Vector2 direction;
     private GameObject moveJoystickGO;
     private FixedJoystick moveJoystick;
@@ -21,6 +21,9 @@ public class Player : NetworkBehaviour
     public float bulletSpeed = 7f;
     public bool canMove = true;
     public float canMoveTime = 2.0f;
+    public float invincibleTime = 1.0f;
+    public bool invincible = false;
+    public GameObject resource;
 
     // 手电筒
     private GameObject torchBtn;
@@ -96,12 +99,16 @@ public class Player : NetworkBehaviour
     private GameObject canvas;
 
     private PositionManager positionManager;
+    private CameraMove cameraMove;
 
     public override void OnStartLocalPlayer()
     {
         // 相机跟随
-        Camera.main.transform.SetParent(transform);
-        Camera.main.transform.localPosition = new Vector3(0, 0, -10);
+        //Camera.main.transform.SetParent(transform);
+        //Camera.main.transform.localPosition = new Vector3(0, 0, -10);
+        cameraMove = transform.Find("/MainCamera").GetComponent<CameraMove>();
+        cameraMove.targetPlayer = transform;
+        cameraMove.box = transform.Find("/Layer1/CameraBorder").gameObject;
 
         CmdSetupPlayer("Player" + Random.Range(100, 999));
     }
@@ -140,6 +147,7 @@ public class Player : NetworkBehaviour
     void Update()
     {
         SetAnimation();
+        UpdateInvincible();
 
         if (!isLocalPlayer) { return; }
 
@@ -379,6 +387,19 @@ public class Player : NetworkBehaviour
         }
     }
 
+    private void UpdateInvincible()
+    {
+        if (invincible)
+        {
+            invincibleTime -= Time.deltaTime;
+            if (invincibleTime <= 0.0f)
+            {
+                invincible = false;
+                invincibleTime = 1.0f;
+            }
+        }
+    }
+
     public void Attack(GameObject other)
     {
         CmdAttack(other, moveJoystick.Direction.normalized);
@@ -393,15 +414,41 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcAttack(GameObject other, Vector2 dir)
     {
-        other.transform.GetComponent<Player>().canMove = false;
+        Player player = other.transform.GetComponent<Player>();
+        player.canMove = false;
         other.transform.GetComponent<Rigidbody2D>().AddForce(dir * 5.0f, ForceMode2D.Impulse);
+
+        if (!player.invincible)
+        {
+            if (player.score > 0)
+            {
+                Instantiate(resource, other.transform.position, Quaternion.identity);
+            }
+            player.score = Mathf.Max(player.score - 1, 0);
+
+            player.ChangeSpeed();
+
+            player.slider.value = player.score;
+            player.invincible = true;
+        }
     }
 
-    public void UsePotral()
+    public void UsePotral(int index)
     {
         if (score == 3)
         {
-            transform.position = positionManager.layer2StartPosition.position;
+            if (index == 2)
+            {
+                transform.position = positionManager.layer2StartPosition.position;
+                cameraMove.box = transform.Find("/Layer2/CameraBorder").gameObject;
+            }
+            else if (index == 3)
+            {
+                //transform.position = positionManager.layer3StartPosition.position;
+                //cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
+            }
+            
+            CmdClearScore();
         }
     }
 
@@ -424,5 +471,39 @@ public class Player : NetworkBehaviour
     {
         score = Mathf.Min(score + amount, 3);
         slider.value = score;
+        ChangeSpeed();
+    }
+
+    [Command]
+    private void CmdClearScore()
+    {
+        RpcClearScore();
+    }
+
+    [ClientRpc]
+    private void RpcClearScore()
+    {
+        score = 0;
+        slider.value = score;
+        ChangeSpeed();
+    }
+
+    private void ChangeSpeed()
+    {
+        switch (score)
+        {
+            case 0:
+                speed = 8.0f;
+                break;
+            case 1:
+                speed = 6.0f;
+                break;
+            case 2:
+                speed = 4.0f;
+                break;
+            case 3:
+                speed = 2.0f;
+                break;
+        }
     }
 }
