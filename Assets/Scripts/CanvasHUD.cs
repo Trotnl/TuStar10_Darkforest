@@ -138,7 +138,6 @@ public class CanvasHUD : NetworkBehaviour
             if (NetworkServer.active)
             {
                 UpdateServerPlayerCount();
-                Debug.Log("Updating...");
             }
         }
 
