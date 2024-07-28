@@ -889,7 +889,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c80c9fdcf6304b640822509ef79de825, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextSceneName: test_huyi
+  nextSceneName: StoryScene
 --- !u!60 &1750911867
 PolygonCollider2D:
   m_ObjectHideFlags: 0
