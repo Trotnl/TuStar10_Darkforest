@@ -5,10 +5,13 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/MirrorRoomOffline.unity
+    guid: 12f1342e3a3121540a7c12a4674c35fe
   - enabled: 1
     path: Assets/Scenes/test_huyi.unity
     guid: ec1ec14f14d76a7469eab5399ac306df
+  - enabled: 1
+    path: Assets/Scenes/MirrorRoomOnline.unity
+    guid: c11a41fcc59dc474998e7b38c04be675
   m_configObjects: {}

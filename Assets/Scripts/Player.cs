@@ -305,7 +305,7 @@ public class Player : NetworkBehaviour
 
         if (isLocalPlayer)
         {
-            torchBtn.GetComponent<Button>().enabled = false;
+            torchBtn.GetComponent<Button>().interactable = false;
             clicked = true;
         }
     }
@@ -369,7 +369,7 @@ public class Player : NetworkBehaviour
             {
                 cooled = false;
                 coolTime = 5.0f;
-                torchBtn.GetComponent<Button>().enabled = true;
+                torchBtn.GetComponent<Button>().interactable = true;
             }
         }
     }
