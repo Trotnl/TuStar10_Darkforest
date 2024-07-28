@@ -6,9 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/StartScene.unity
-    guid: 59ca6afd33682b542a4b80680b72ae5d
-  - enabled: 1
     path: Assets/Scenes/test_huyi.unity
     guid: ec1ec14f14d76a7469eab5399ac306df
   m_configObjects: {}

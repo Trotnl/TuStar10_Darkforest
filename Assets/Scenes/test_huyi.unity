@@ -492,8 +492,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 3c8c2270a2a00ad4dbcd1574ef3a0802, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -21459,7 +21459,7 @@ MonoBehaviour:
   offlineScene: Assets/Scenes/test_huyi.unity
   onlineScene: Assets/Scenes/test_huyi.unity
   transport: {fileID: 1315048962}
-  networkAddress: 127.0.0.1
+  networkAddress: 172.16.62.70
   maxConnections: 100
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
