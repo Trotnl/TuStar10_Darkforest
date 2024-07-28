@@ -16894,6 +16894,7 @@ MonoBehaviour:
   LoadingText: {fileID: 780153601}
   LoadingImage: {fileID: 1010817420}
   playerCountText: {fileID: 780153602}
+  isBegin: 0
 --- !u!114 &1030249618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23767,6 +23768,10 @@ PrefabInstance:
     - target: {fileID: -1415871953065010871, guid: e1134c9bd0717024389cc462480d0a50, type: 3}
       propertyPath: index
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1331497951914641493, guid: e1134c9bd0717024389cc462480d0a50, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3203826172234799535, guid: e1134c9bd0717024389cc462480d0a50, type: 3}
       propertyPath: m_LocalPosition.x

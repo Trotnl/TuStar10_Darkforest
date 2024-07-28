@@ -48,12 +48,14 @@ public class Potral : MonoBehaviour
 
     public void Active(object[] arr)
     {
-        transform.gameObject.SetActive(true);
+        transform.GetComponent<BoxCollider2D>().enabled = true;
+        transform.Find("Potral/enable").gameObject.SetActive(true);
     }
 
     // 设置初始状态
     private void Start()
     {
-        transform.gameObject.SetActive(false);
+        transform.GetComponent<BoxCollider2D>().enabled = false;
+        transform.Find("Potral/enable").gameObject.SetActive(false);
     }
 }
