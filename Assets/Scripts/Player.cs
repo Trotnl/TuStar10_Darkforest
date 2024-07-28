@@ -1,4 +1,5 @@
 ﻿using Mirror;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -201,19 +202,17 @@ public class Player : NetworkBehaviour
         {
             transform.localScale = new Vector3(1, 1, 1);
             canvas.transform.localScale = new Vector3(1, 1, 1);
-            Debug.Log("currentX<0");
-            AudioTest.PlayAudio();
+            AudioRun.PlayAudio();
         }
         else if (currentX > 0)
         {
             transform.localScale = new Vector3(-1, 1, 1);
             canvas.transform.localScale = new Vector3(-1, 1, 1);
-            Debug.Log("currentX>0");
-            AudioTest.PlayAudio();
+            AudioRun.PlayAudio();
         }
         else
         {
-            AudioTest.StopAudio();
+            AudioRun.StopAudio();
         }
     }
 
@@ -314,7 +313,6 @@ public class Player : NetworkBehaviour
         }
         
         arm.transform.localEulerAngles = new Vector3(0, 0, angle);
-        Debug.Log(arm.transform.localEulerAngles);
     }
 
 	private void TorchBtnOnClick()
@@ -461,8 +459,28 @@ public class Player : NetworkBehaviour
         currentIndex = index;
         if (score == 3)
         {
-            CmdSetTrans(true);
+            StartCoroutine(Transition());
         }
+    }
+
+    IEnumerator Transition()
+    {
+        CmdSetTrans(true);
+
+        yield return new WaitForSeconds(1.0f);
+
+        if (currentIndex == 2)
+        {
+            transform.position = positionManager.layer2StartPosition.position;
+            cameraMove.box = transform.Find("/Layer2/CameraBorder").gameObject;
+        }
+        else if (currentIndex == 3)
+        {
+            transform.position = positionManager.layer3StartPosition.position;
+            cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
+        }
+
+        CmdClearScore();
     }
 
     public void GetResource(int amount)
@@ -518,20 +536,5 @@ public class Player : NetworkBehaviour
                 speed = 4.0f;
                 break;
         }
-    }
-
-    public void ChangePosition()
-    {
-        if (currentIndex == 2)
-        {
-            transform.position = positionManager.layer2StartPosition.position;
-            cameraMove.box = transform.Find("/Layer2/CameraBorder").gameObject;
-        }
-        else if (currentIndex == 3)
-        {
-            transform.position = positionManager.layer3StartPosition.position;
-            cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
-        }
-        CmdClearScore();
     }
 }
