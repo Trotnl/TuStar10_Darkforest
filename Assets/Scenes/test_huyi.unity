@@ -21247,8 +21247,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1315048960}
-  - component: {fileID: 1315048963}
   - component: {fileID: 1315048962}
+  - component: {fileID: 1315048963}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -21304,7 +21304,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1315048959}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aab4c8111b7c411b9b92cf3dbc5bd4e, type: 3}
+  m_Script: {fileID: 11500000, guid: 1f144efb46f61cf4cbeb0058fb2ffd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
@@ -21316,8 +21316,8 @@ MonoBehaviour:
   autoConnectClientBuild: 0
   offlineScene: Assets/Scenes/test_huyi.unity
   onlineScene: Assets/Scenes/test_huyi.unity
-  transport: {fileID: 0}
-  networkAddress: 127.0.0.1
+  transport: {fileID: 1315048962}
+  networkAddress: 172.16.62.70
   maxConnections: 100
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
@@ -21325,7 +21325,10 @@ MonoBehaviour:
   playerPrefab: {fileID: 5444329786337595289, guid: 4d5c407fe579371439b9d6f38f0608d3, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 1
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 8454211293857395799, guid: 6ccf6c79c71d97b4e9c5e5a1d0f18b51, type: 3}
+  - {fileID: 6409655197343928005, guid: 4969d9d92b5c14c4bacfa89127073b63, type: 3}
+  - {fileID: 7193460220722081614, guid: 35f3f21683b83c6438638a9f736d6f62, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
