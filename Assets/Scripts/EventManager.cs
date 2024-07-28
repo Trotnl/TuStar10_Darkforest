@@ -12,6 +12,8 @@ public class EventManager
         public object[] args;
     }
 
+    public static int count = 0;
+
     private static EventManager instance = new EventManager();
     public static EventManager Instance => instance;
 

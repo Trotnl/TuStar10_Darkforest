@@ -16,6 +16,7 @@ public class Player : NetworkBehaviour
     private FixedJoystick moveJoystick;
     private GameObject attackJoyStickGO;
     public AttackJoystick attackJoystick;
+    public int id;
 
     // 攻击
     public GameObject bullet;
@@ -107,9 +108,6 @@ public class Player : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        // 相机跟随
-        //Camera.main.transform.SetParent(transform);
-        //Camera.main.transform.localPosition = new Vector3(0, 0, -10);
         cameraMove = transform.Find("/MainCamera").GetComponent<CameraMove>();
         cameraMove.targetPlayer = transform;
         cameraMove.box = transform.Find("/Layer1/CameraBorder").gameObject;
@@ -128,6 +126,9 @@ public class Player : NetworkBehaviour
         slider = transform.GetChild(0).GetChild(1).GetComponent<Slider>();
         positionManager = transform.Find("/PositionManager").GetComponent<PositionManager>();
         canvas = transform.GetChild(0).gameObject;
+
+        id = EventManager.count + 1;
+        EventManager.count++;
 
         if (!isLocalPlayer) { return; }
 
@@ -479,6 +480,11 @@ public class Player : NetworkBehaviour
             transform.position = positionManager.layer3StartPosition.position;
             cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
         }
+        else if (currentIndex == 4)
+        {
+            // 胜利
+            CmdWin(id);
+        }
 
         CmdClearScore();
     }
@@ -536,5 +542,17 @@ public class Player : NetworkBehaviour
                 speed = 4.0f;
                 break;
         }
+    }
+
+    [Command]
+    private void CmdWin(int id_)
+    {
+        RpcWin(id_);
+    }
+
+    [ClientRpc]
+    private void RpcWin(int id_)
+    {
+        transform.Find($"/Canvas/win{id_}").gameObject.SetActive(true);
     }
 }
