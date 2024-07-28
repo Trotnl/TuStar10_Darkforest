@@ -86,12 +86,15 @@ public class Player : NetworkBehaviour
     private float currentX;
 
     // 同步动画
-    [SyncVar(hook = nameof(OnAnimationChange))]
+    [SyncVar(hook = nameof(OnRunChange))]
     private bool run;
 
+    [SyncVar(hook = nameof(OnTransChange))]
+    private bool trans;
+
     // 同步得分
-    //[SyncVar(hook = nameof(OnScoreChange))]
     public int score;
+    public int currentIndex;
 
     // UI组件
     private TextMeshProUGUI scoreText;
@@ -173,7 +176,7 @@ public class Player : NetworkBehaviour
     // 切换动画
     void SetAnimation()
     {
-        CmdSetAnimation(direction != Vector2.zero);
+        CmdSetRun(direction != Vector2.zero);
     }
 
     // 人物翻转
@@ -198,17 +201,30 @@ public class Player : NetworkBehaviour
         {
             transform.localScale = new Vector3(1, 1, 1);
             canvas.transform.localScale = new Vector3(1, 1, 1);
+            Debug.Log("currentX<0");
+            AudioTest.PlayAudio();
         }
         else if (currentX > 0)
         {
             transform.localScale = new Vector3(-1, 1, 1);
             canvas.transform.localScale = new Vector3(-1, 1, 1);
+            Debug.Log("currentX>0");
+            AudioTest.PlayAudio();
+        }
+        else
+        {
+            AudioTest.StopAudio();
         }
     }
 
-    private void OnAnimationChange(bool _old, bool _new)
+    private void OnRunChange(bool _old, bool _new)
     {
         animator.SetBool("run", run);
+    }
+
+    private void OnTransChange(bool _old, bool _new)
+    {
+        animator.SetTrigger("trans");
     }
 
     [Command]
@@ -224,9 +240,15 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    private void CmdSetAnimation(bool _run)
+    private void CmdSetRun(bool _run)
     {
         run = _run;
+    }
+
+    [Command]
+    private void CmdSetTrans(bool _trans)
+    {
+        trans = _trans;
     }
 
     [Command]
@@ -290,8 +312,9 @@ public class Player : NetworkBehaviour
                 angle = -angle + 180;
             }
         }
-
+        
         arm.transform.localEulerAngles = new Vector3(0, 0, angle);
+        Debug.Log(arm.transform.localEulerAngles);
     }
 
 	private void TorchBtnOnClick()
@@ -435,24 +458,10 @@ public class Player : NetworkBehaviour
 
     public void UsePotral(int index)
     {
+        currentIndex = index;
         if (score == 3)
         {
-            if (index == 2)
-            {
-                transform.position = positionManager.layer2StartPosition.position;
-                cameraMove.box = transform.Find("/Layer2/CameraBorder").gameObject;
-            }
-            else if (index == 3)
-            {
-                transform.position = positionManager.layer3StartPosition.position;
-                cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
-            }
-            else if (index == 4)
-            {
-                // 游戏结束
-            }
-
-            CmdClearScore();
+            CmdSetTrans(true);
         }
     }
 
@@ -509,5 +518,20 @@ public class Player : NetworkBehaviour
                 speed = 4.0f;
                 break;
         }
+    }
+
+    public void ChangePosition()
+    {
+        if (currentIndex == 2)
+        {
+            transform.position = positionManager.layer2StartPosition.position;
+            cameraMove.box = transform.Find("/Layer2/CameraBorder").gameObject;
+        }
+        else if (currentIndex == 3)
+        {
+            transform.position = positionManager.layer3StartPosition.position;
+            cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
+        }
+        CmdClearScore();
     }
 }
