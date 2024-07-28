@@ -19,6 +19,8 @@ public class CanvasHUD : NetworkBehaviour
 
     public TMP_Text playerCountText;
 
+    public bool isBegin;
+
     private void Start()
     {
         // Update the canvas text if you have manually changed network managers address from the game object before starting the game scene
@@ -37,6 +39,8 @@ public class CanvasHUD : NetworkBehaviour
         btnStop.onClick.AddListener(BtnStop);
 
         LoadingText.SetActive(false);
+
+        isBegin = false;
 
         Debug.Log("active");
 
@@ -138,6 +142,8 @@ public class CanvasHUD : NetworkBehaviour
             if (NetworkServer.active)
             {
                 UpdateServerPlayerCount();
+                Debug.Log("Updating...");
+                Debug.Log(isBegin);
             }
         }
 
@@ -160,6 +166,7 @@ public class CanvasHUD : NetworkBehaviour
             {
                 LoadingImage.SetActive(false);
                 LoadingText.SetActive(false);
+                isBegin = true;
             }
 
             if (count < 2)

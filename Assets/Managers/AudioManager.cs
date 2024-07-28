@@ -65,10 +65,6 @@ public class AudioManager : MonoBehaviour
 
     public static void PlayAudio()
     {
-        // foreach (var key in instance.audioDict.Keys)
-        // {
-        //    Debug.Log(key);
-        // }
         Debug.Log("PlayAudio!");
         instance.audioDict["Win"].Play();
 

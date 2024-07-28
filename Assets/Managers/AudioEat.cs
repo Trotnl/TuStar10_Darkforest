@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class AudioTest : MonoBehaviour
+public class AudioEat : MonoBehaviour
 {
 
     //AudioClip
-    public AudioClip run;
+    public AudioClip eat;
 
     private AudioSource audioSource;
 
-    private static AudioTest instance;
+    private static AudioEat instance;
 
     private void Awake()
     {
@@ -29,7 +29,7 @@ public class AudioTest : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        audioSource.clip = run;
+        audioSource.clip = eat;
         audioSource.loop = true;
         audioSource.volume = 0.5f;
     }
@@ -44,5 +44,4 @@ public class AudioTest : MonoBehaviour
     {
         instance.audioSource.Stop();
     }
-
 }
