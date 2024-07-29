@@ -203,17 +203,17 @@ public class Player : NetworkBehaviour
         {
             transform.localScale = new Vector3(1, 1, 1);
             canvas.transform.localScale = new Vector3(1, 1, 1);
-            AudioRun.PlayAudio();
+            //AudioRun.PlayAudio();
         }
         else if (currentX > 0)
         {
             transform.localScale = new Vector3(-1, 1, 1);
             canvas.transform.localScale = new Vector3(-1, 1, 1);
-            AudioRun.PlayAudio();
+            //AudioRun.PlayAudio();
         }
         else
         {
-            AudioRun.StopAudio();
+            //AudioRun.StopAudio();
         }
     }
 
