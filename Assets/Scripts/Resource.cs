@@ -24,8 +24,8 @@ public class Resource : MonoBehaviour
             {
                 player.GetResource(1);
                 Destroy(gameObject);
+                //AudioEat.PlayAudio();
             }
-            AudioEat.PlayAudio();
         }
     }
 }

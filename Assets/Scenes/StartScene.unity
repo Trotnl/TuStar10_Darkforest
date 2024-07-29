@@ -964,6 +964,56 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 390993537}
   m_SourcePrefab: {fileID: 4843985084834002234, guid: 608359f03cf8e2a4295aea281468caba, type: 3}
+--- !u!1 &1076337326
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1076337328}
+  - component: {fileID: 1076337327}
+  m_Layer: 0
+  m_Name: GameRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1076337327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076337326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 513ba551ac827eb4d8bf63c780fee954, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - clip: {fileID: 8300000, guid: 9f8a600499ab8cd48be6ee0717686002, type: 3}
+    outputGroup: {fileID: 0}
+    volume: 1
+    playOnAwake: 1
+    loop: 1
+--- !u!4 &1076337328
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076337326}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -46.923294, y: 24.0476, z: 10.686467}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1750911862 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -510011165522546527, guid: 6c5899ed31734ec47b98dd216fe999d7, type: 3}
@@ -1434,3 +1484,4 @@ SceneRoots:
   - {fileID: 408958726}
   - {fileID: 2115889174}
   - {fileID: 214758725}
+  - {fileID: 1076337328}

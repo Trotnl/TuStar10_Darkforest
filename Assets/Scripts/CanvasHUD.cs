@@ -158,7 +158,7 @@ public class CanvasHUD : NetworkBehaviour
                 playerCountText.text = "当前在线人数: " + count;
             }
 
-            if (count >= 4) 
+            if (count >= 2) 
             {
                 LoadingImage.SetActive(false);
                 LoadingText.SetActive(false);
@@ -166,7 +166,7 @@ public class CanvasHUD : NetworkBehaviour
                 //Debug.Log(isBegin);
         }
 
-            if (count < 4)
+            if (count < 2)
             {
             LoadingImage.SetActive(true);
             LoadingText.SetActive(true);
