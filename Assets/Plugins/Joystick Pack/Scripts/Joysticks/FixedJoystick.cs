@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 public class FixedJoystick : Joystick
 {
+
     public override void OnPointerDown(PointerEventData eventData)
     {
         base.OnPointerDown(eventData);

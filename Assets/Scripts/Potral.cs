@@ -5,12 +5,20 @@ using UnityEngine;
 public class Potral : MonoBehaviour
 {
     public int index; // 2 一层跃迁点，3 二层跃迁点，4 三层直接获胜
+    public AudioSource Portal_Music;
+    public AudioClip portalSound;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Player player = collision.GetComponent<Player>();
         if (player != null)
         {
             player.UsePotral(index);
+            if (player.score == 3)
+            {
+                Portal_Music.PlayOneShot(portalSound);
+            }
+            
         }
     }
 
