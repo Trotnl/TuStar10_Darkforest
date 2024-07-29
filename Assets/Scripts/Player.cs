@@ -22,7 +22,7 @@ public class Player : NetworkBehaviour
     public GameObject bullet;
     public float bulletSpeed = 7f;
     public bool canMove = true;
-    public float canMoveTime = 2.0f;
+    public float canMoveTime = 1.5f;
     public float invincibleTime = 1.0f;
     public bool invincible = false;
     public GameObject resource;
@@ -438,7 +438,7 @@ public class Player : NetworkBehaviour
     {
         Player player = other.transform.GetComponent<Player>();
         player.canMove = false;
-        other.transform.GetComponent<Rigidbody2D>().AddForce(dir * 5.0f, ForceMode2D.Impulse);
+        other.transform.GetComponent<Rigidbody2D>().AddForce(dir * 3.0f, ForceMode2D.Impulse);
 
         if (!player.invincible)
         {
@@ -461,7 +461,12 @@ public class Player : NetworkBehaviour
         if (score == 3)
         {
             StartCoroutine(Transition());
+            if (index == 4)
+            {
+                transform.Find($"/Canvas/win{id}").gameObject.GetComponent<Image>().enabled = true;
+            }
         }
+        
     }
 
     IEnumerator Transition()
@@ -479,11 +484,6 @@ public class Player : NetworkBehaviour
         {
             transform.position = positionManager.layer3StartPosition.position;
             cameraMove.box = transform.Find("/Layer3/CameraBorder").gameObject;
-        }
-        else if (currentIndex == 4)
-        {
-            // 胜利
-            CmdWin(id);
         }
 
         CmdClearScore();
@@ -544,15 +544,18 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [Command]
-    private void CmdWin(int id_)
-    {
-        RpcWin(id_);
-    }
+    //[Command]
+    //private void CmdWin(int id_)
+    //{
+    //    RpcWin(id_);
+    //}
 
-    [ClientRpc]
-    private void RpcWin(int id_)
-    {
-        transform.Find($"/Canvas/win{id_}").gameObject.SetActive(true);
-    }
+    //[ClientRpc]
+    //private void RpcWin(int id_)
+    //{
+    //    Debug.Log("????");
+    //    //transform.Find($"/Canvas/win{id_}").gameObject.SetActive(true);
+    //    transform.Find("/Canvas/win1").gameObject.SetActive(true);
+    //    Debug.Log("????");
+    //}
 }

@@ -42,8 +42,6 @@ public class CanvasHUD : NetworkBehaviour
 
         isBegin = false;
 
-        Debug.Log("active");
-
         // This updates the Unity canvas, we have to manually call it every change, unlike legacy OnGUI.
         SetupCanvas();
     }
@@ -95,7 +93,6 @@ public class CanvasHUD : NetworkBehaviour
         public void SetupCanvas()
         {
             // Here we will dump majority of the canvas UI that may be changed.
-            Debug.Log("SetupCanvas");
 
             if (!NetworkClient.isConnected && !NetworkServer.active)
             {
@@ -161,7 +158,7 @@ public class CanvasHUD : NetworkBehaviour
                 playerCountText.text = "当前在线人数: " + count;
             }
 
-            if (count >= 2) 
+            if (count >= 4) 
             {
                 LoadingImage.SetActive(false);
                 LoadingText.SetActive(false);
@@ -169,7 +166,7 @@ public class CanvasHUD : NetworkBehaviour
                 //Debug.Log(isBegin);
         }
 
-            if (count < 2)
+            if (count < 4)
             {
             LoadingImage.SetActive(true);
             LoadingText.SetActive(true);

@@ -57,7 +57,6 @@ public class GameTimer : MonoBehaviour
         else if (elapsedTime >= 60f /* && !level1WarpPointOpened */)
         {
             //OpenLevel1WarpPoint();
-            Debug.Log("999");
             EventManager.Trigger(EEventType.open_first_door.ToString());
         }
     }
