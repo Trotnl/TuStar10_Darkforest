@@ -29,10 +29,9 @@ public class GameTimer : MonoBehaviour
     {
         if (gameEnded)
             return;
-        Debug.Log("111");
+        
         if (!transform.Find("/Canvas").GetComponent<CanvasHUD>().isBegin)
         {
-            Debug.Log("222");
             return;
         }
 

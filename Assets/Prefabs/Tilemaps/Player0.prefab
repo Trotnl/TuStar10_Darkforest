@@ -814,6 +814,7 @@ MonoBehaviour:
   syncInterval: 0
   speed: 8
   attackJoystick: {fileID: 0}
+  id: 0
   bullet: {fileID: 3230035702701911184, guid: 28fd1fa8bb5606e478e0d393c9203f0a, type: 3}
   bulletSpeed: 7
   canMove: 1
