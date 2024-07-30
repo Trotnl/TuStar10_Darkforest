@@ -208,6 +208,7 @@ public class Player : NetworkBehaviour
         {
             transform.localScale = new Vector3(-1, 1, 1);
             canvas.transform.localScale = new Vector3(-1, 1, 1);
+           
         }
     }
 
@@ -223,7 +224,6 @@ public class Player : NetworkBehaviour
             AudioRun.StopAudio();
         }
     }
-
     private void OnTransChange(bool _old, bool _new)
     {
         animator.SetTrigger("trans");
